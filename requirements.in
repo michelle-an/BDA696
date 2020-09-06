@@ -1,0 +1,17 @@
+black
+flake8
+graphviz
+isort[requirements]
+nose
+numpy
+pandas
+pip-tools
+pre-commit
+plotly
+pydot
+pyspark
+pyspark-stubs
+requests
+scikit-learn
+statsmodels
+sqlalchemy
