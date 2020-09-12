@@ -270,9 +270,9 @@ def knn_predict(data, slice_n, verbose=False):
 
 def main():
     working_data_set = setup(file="iris.data")
-    # plotting(data=working_data_set)
-    rf_predictions(data=working_data_set, slice_n=10, verbose=True)
-    knn_predict(data=working_data_set, slice_n=10, verbose=True)
+    plotting(data=working_data_set)
+    rf_predictions(data=working_data_set, slice_n=1, verbose=True)
+    knn_predict(data=working_data_set, slice_n=1, verbose=True)
 
 
 if __name__ == "__main__":
