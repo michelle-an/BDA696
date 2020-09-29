@@ -65,11 +65,11 @@ SELECT * FROM rolling_avg_temp rat ORDER BY game_id DESC;
 	
 CREATE TABLE rolling_batting_avg
 	SELECT rat1.game_id, rat1.local_date AS game_date, rat1.batter,
-	IFNULL((SELECT SUM(Hit) FROM rolling_avg_temp rat2 WHERE rat2.local_date > DATE_ADD(local_date, INTERVAL - @date_range DAY) AND rat2.local_date < rat1.local_date AND rat1.batter = rat2.batter), 0) AS last_100_days_hits,
-	IFNULL((SELECT SUM(atbat) FROM rolling_avg_temp rat2 WHERE rat2.local_date > DATE_ADD(local_date, INTERVAL - @date_range DAY) AND rat2.local_date < rat1.local_date AND rat1.batter = rat2.batter), 0) AS last_100_days_atbats
+	IFNULL((SELECT SUM(Hit) FROM rolling_avg_temp rat2 WHERE rat2.local_date > DATE_ADD(rat1.local_date, INTERVAL - @date_range DAY) AND rat2.local_date < rat1.local_date AND rat1.batter = rat2.batter), 0) AS last_100_days_hits,
+	IFNULL((SELECT SUM(atbat) FROM rolling_avg_temp rat2 WHERE rat2.local_date > DATE_ADD(rat1.local_date, INTERVAL - @date_range DAY) AND rat2.local_date < rat1.local_date AND rat1.batter = rat2.batter), 0) AS last_100_days_atbats
 	FROM rolling_avg_temp rat1
 	ORDER BY rat1.game_id DESC
--- 	LIMIT 20
+	LIMIT 100
 	;
 	
 ALTER TABLE rolling_batting_avg ADD rolling_average decimal (4,3);
