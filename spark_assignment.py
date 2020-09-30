@@ -52,11 +52,10 @@ def main():
     # import batter counts table and game table
     cursor = connection.cursor()
     count = 0
-    # limit = 1000  # this is the number of rows to limit the larger table to.
     printout("creating table...")
     cursor.execute(
-        f"SELECT bc.game_id, bc.batter, bc.Hit, bc.atbat, gt.local_date "
-        f"FROM batter_counts bc INNER JOIN game_temp gt on bc.game_id = gt.game_id ORDER BY game_id"
+        f"SELECT bc.game_id, bc.batter, bc.Hit, bc.atbat, gt.local_date \
+        FROM batter_counts bc INNER JOIN game_temp gt on bc.game_id = gt.game_id ORDER BY game_id"
     )
     printout("importing table...")
     for (game_id, batter, hit, atbat, local_date) in cursor:
@@ -67,7 +66,7 @@ def main():
         )
         df = df.union(to_insert)
         count += 1
-        if count % 100 == 0:
+        if count % 500 == 0:
             print(f"\timporting row {count}...")
     print(df.show(n=200))
     df.createOrReplaceTempView("rolling_avg_temp")
@@ -76,7 +75,7 @@ def main():
     # solve for rolling batting averages
     printout("solving for rolling batting averages...")
     rolling_df = spark.sql(
-        f"""SELECT rat1.batter, (SUM(rat2.Hit) / SUM(rat2.atbat)) AS rolling_average \
+        f"""SELECT rat1.batter, SUM(rat2.Hit) AS sum_hits , SUM(rat2.atbat) AS sum_bats \
         FROM rolling_avg_temp rat1 JOIN rolling_avg_temp rat2 ON rat2.local_date \
         BETWEEN DATE_ADD(rat1.local_date, - 100) AND rat1.local_date AND \
         rat1.batter = rat2.batter GROUP BY rat1.batter"""
@@ -90,19 +89,22 @@ def main():
     printout("converting data to array...")
     rolling_df = spark.sql(
         """SELECT * , SPLIT(CONCAT(CASE WHEN batter IS NULL THEN "" \
-        ELSE batter END, " ", CASE WHEN rolling_average IS NULL THEN "" \
-        ELSE rolling_average END), " ") AS as_array FROM rolling_df"""
+        ELSE batter END, " ", CASE WHEN sum_hits IS NULL OR sum_bats IS NULL THEN "" \
+        ELSE ROUND(sum_hits/sum_bats, 3) END), " ") \
+        AS array_with_rolling_averages FROM rolling_df"""
     )
     print(rolling_df.show(n=20))
 
     # fit array column to count vectorizer
     printout("running vectorizer and transformer...")
-    count_vectorizer = CountVectorizer(inputCol="as_array", outputCol="array_vector")
+    count_vectorizer = CountVectorizer(
+        inputCol="array_with_rolling_averages", outputCol="array_vector"
+    )
     count_vectorizer_fitted = count_vectorizer.fit(rolling_df)
 
     # transform the fitted count vectorizer
     rolling_df = count_vectorizer_fitted.transform(rolling_df)
-    print(rolling_df.show(n=20))
+    print(rolling_df.show(n=20, truncate=False))
 
     return
 
