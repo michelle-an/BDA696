@@ -12,7 +12,8 @@
 ## Update versions
 
 `pip-compile --output-file=requirements.dev.txt requirements.dev.in --upgrade`
+`pip-compile --output-file=requirements.txt requirements.in --upgrade`
 
 # Run `pre-commit` locally.
 
-`pre-commit run --all-files`
+`pre-commit run --all-files
