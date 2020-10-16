@@ -9,13 +9,9 @@ pip-tools
 pre-commit
 plotly
 pydot
-pyspark
-pyspark-stubs
 requests
 scikit-learn
 statsmodels
-sqlalchemy
-mysqlclient
-pyspark
-pyspark-stubs
-statsmodels
+jinja2
+scipy
+statistics

@@ -16,4 +16,4 @@
 
 # Run `pre-commit` locally.
 
-`pre-commit run --all-files
+# `pre-commit run --all-files
