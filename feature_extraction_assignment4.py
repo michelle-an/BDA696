@@ -79,6 +79,7 @@ def add_average_row(table):
     msd_average = statistics.mean(msd_wo_zeros)
     values = {x: [""] for x in columns}
     values[columns[-1]] = msd_average
+    values[columns[-2]] = "weighted MSD sum:"
     new_row = pd.DataFrame.from_dict(values, orient="columns")
     table = table.append(new_row, ignore_index=True)
     return table
@@ -95,6 +96,7 @@ def main():
 
     # find which columns are predictors and which is response
     cols = input_df.columns.to_list()
+    print(input_df.head())
     check = False
     while not check:
         response = input(f"Which column is the response? \n {cols}? \n")
