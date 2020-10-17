@@ -30,11 +30,14 @@ def make_clickable(val):
 def plot_msd(table, feature, response):
     pop_mean = table["population mean"][1]
     x = [xx for xx in table["median"].to_list() if xx != 0]
-    c = [xx for xx in table["count"].to_list() if xx != 0]
+    ll = [xx for xx in table["lower bin"].to_list() if xx != 0]
+    uu = [xx for xx in table["lower bin"].to_list() if xx != 0]
+    center = [ll[i] + ((uu[i] - ll[i]) / 2) for i in range(len(ll))]
+    count = [cc for cc in table["count"].to_list() if cc != 0]
     y = [yy for yy in table["bin mean"].to_list() if yy != 0]
     plt = [
         go.Scatter(x=x, y=y, name="bin mean"),
-        go.Bar(x=x, y=c, yaxis="y2", name="population", opacity=0.5),
+        go.Bar(x=center, y=count, yaxis="y2", name="population", opacity=0.5),
         go.Scatter(
             x=[min(x), max(x)],
             y=[pop_mean, pop_mean],
@@ -197,8 +200,8 @@ def main():
             linear_regression_model = statsmodels.api.OLS(y, predictor, missing="drop")
             linear_regression_fitted = linear_regression_model.fit()
             print(linear_regression_fitted.summary())
-            t_value = round(linear_regression_fitted.tvalues[1], 6)
-            p_value = "{:.6e}".format(linear_regression_fitted.pvalues[1])
+            p_value = round(linear_regression_fitted.tvalues[1], 4)
+            t_value = "{:.6e}".format(linear_regression_fitted.pvalues[1])
             p_val[feature_name], t_val[feature_name] = t_value, p_value
             fig = px.scatter(x=column, y=y, trendline="ols")
             fig.update_layout(
@@ -225,8 +228,8 @@ def main():
             )
             logistic_regression_fitted = logistic_regression_model.fit()
             print(logistic_regression_fitted.summary())
-            t_value = round(logistic_regression_fitted.tvalues[1], 6)
-            p_value = "{:.6e}".format(logistic_regression_fitted.pvalues[1])
+            p_value = round(logistic_regression_fitted.tvalues[1], 4)
+            t_value = "{:.6e}".format(logistic_regression_fitted.pvalues[1])
             p_val[feature_name], t_val[feature_name] = t_value, p_value
             fig = px.scatter(x=column, y=y, trendline="ols")
             fig.update_layout(
