@@ -4,8 +4,6 @@ graphviz
 isort[requirements]
 nose
 numpy
-scipy
-seaborn
 pandas
 pip-tools
 pre-commit
@@ -14,5 +12,6 @@ pydot
 requests
 scikit-learn
 statsmodels
-statistics
 jinja2
+scipy
+statistics
