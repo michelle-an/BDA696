@@ -3,15 +3,17 @@ version: '3.3'
 
 services:
 
-  mariadb:
-    image: mariadb:latest
-    container_name: mariadb
+  mariadb_michelle:
+    image: linuxserver/mariadb:latest
+    container_name: mariadb_michelle
     environment:
+      PUID: 1000
+      PGID: 1000
       MYSQL_ROOT_PASSWORD: michelle123
       MYSQL_USER: root
       MYSQL_PASSWORD: michelle123
     volumes:
-      - 'dbdata:/var/lib/mysql'
+      - './dbdata:/config'
     restart: unless-stopped
     networks:
       - my-network
@@ -23,17 +25,13 @@ services:
       dockerfile: Dockerfile
     image: ubuntu_service
     volumes:
-      - 'dbdata:/app/output'
+      - './results:/app/output'
     networks:
       my-network:
         aliases:
           - ubuntu_service
     depends_on:
-      - mariadb
+      - mariadb_michelle
 
 networks:
   my-network:
-
-volumes:
-  dbdata:
-    driver: local

@@ -16,8 +16,8 @@ RUN apt-get install --yes mysql-server
 RUN apt-get dist-upgrade
 
 COPY run.sh run.sh
-COPY ./database/baseball.sql baseball.sql
-
+COPY ./baseball.sql baseball.sql
+RUN mkdir $APP_HOME/output
 RUN ["chmod", "u+x", "run.sh"]
 
 SHELL ["/bin/bash", "-c"] 
