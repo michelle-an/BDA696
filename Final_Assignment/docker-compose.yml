@@ -1,0 +1,19 @@
+version: "3.3"
+
+services:
+  python:
+    container_name: portal_predict
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: python_service
+    volumes:
+      - "./results:/output"
+    networks:
+      my-network:
+        aliases:
+          - ubuntu_service
+    restart: unless-stopped
+
+networks:
+  my-network:
