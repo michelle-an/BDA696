@@ -25,7 +25,6 @@ RUN pip install biopython
 RUN python import_graph_train_test.py
 RUN python predict.py
 
-RUN rm flexibility_secondary_etc.csv
 RUN rm import_graph_train_test.py
 RUN rm predict.py
 
